@@ -9,7 +9,8 @@ import {
 } from '@tmo/books/data-access';
 import { FormBuilder } from '@angular/forms';
 import { Book } from '@tmo/shared/models';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, startWith, takeUntil, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'tmo-book-search',
@@ -18,10 +19,10 @@ import { Observable } from 'rxjs';
 })
 export class BookSearchComponent implements OnInit {
   books: Observable<ReadingListBook[]> = this.store.select(getAllBooks);
-
   searchForm = this.fb.group({
     term: ''
   });
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private readonly store: Store,
@@ -33,6 +34,16 @@ export class BookSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.searchForm
+      .get('term')
+      .valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+      .subscribe((key) => {
+        if (key !== "") {
+        this.searchBooks();
+      } else {
+        this.store.dispatch(clearSearch());
+      }
+    });
   }
 
   formatDate(date: void | string) {
@@ -56,5 +67,10 @@ export class BookSearchComponent implements OnInit {
     } else {
       this.store.dispatch(clearSearch());
     }
+  }
+  
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }
