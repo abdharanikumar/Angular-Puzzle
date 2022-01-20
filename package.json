@@ -7,8 +7,7 @@
     "nx": "nx",
     "start": "nx serve okreads",
     "build": "nx build",
-    "test": "const item: ReadingListItem = createReadingListItem('abc');
-    component.removeFromReadingList(item);",
+    "test": "nx test",
     "lint": "nx workspace-lint && nx lint",
     "e2e": "nx e2e okreads-e2e",
     "e2e:watch": "nx e2e okreads-e2e --watch",
