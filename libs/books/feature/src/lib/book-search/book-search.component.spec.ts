@@ -42,7 +42,7 @@ describe('ProductsListComponent', () => {
     expect(component).toBeDefined();
   });
 
-  it('should call addToReadingList action', () => {
+  it('should call addBookToReadingList action', () => {
     const dispatchSpy = spyOn(store, 'dispatch');
     const book: Book = createBook('abc');
     component.addBookToReadingList(book);
